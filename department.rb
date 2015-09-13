@@ -8,20 +8,27 @@ class Department
     @employees = employees
   end
 
+
   def add_employee(employee)
     @employees << employee
   end
+
 
   def total_salary(employees = @employees)
     employees.reduce(0) { |sum, e| sum += e.salary }
   end
 
-  def change_salary(percent: 0.0, adjust_amount: 0.0, all: false )
+
+  def change_salary(percent: 0.0, adjust_amount: 0.0)
     raise ArgumentError "Need a percent or amount" if percent == 0.0 && adjust_amount == 0.0
     raise ArgumentError "Provided both arguments, but can only take one" if percent != 0.0 && adjust_amount != 0.0
 
-    employees = @employees
-    employees = @employees.select { |e| e.performance > 0.50 } unless all
+    employees = []
+    if block_given?
+      employees = @employees.select { |e| yield e }
+    else
+      employees = @employees
+    end
 
     unless adjust_amount == 0.0
       amount_each = adjust_amount / employees.length
@@ -31,5 +38,6 @@ class Department
     employees.each { |e| e.change_salary(percent: percent) } unless percent == 0.0
 
   end
+
 
 end
