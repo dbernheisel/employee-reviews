@@ -8,11 +8,15 @@ require './review'
 class EmployeeTest < Minitest::Test
 
   def david
-    Employee.new(name: "David", salary: 40000, phone: "123", email: "david@test.com")
+    david = Employee.new(name: "David", salary: 40000, phone: "123", email: "david@test.com")
+    david.add_review(Review.new(review: "something", rating: 0.25))
+    david
   end
 
   def blake
-    Employee.new(name: "Blake", salary: 40001, phone: "321", email: "blake@test.com")
+    blake = Employee.new(name: "Blake", salary: 40001, phone: "321", email: "blake@test.com")
+    blake.add_review(Review.new(review: "something else", rating: 0.75))
+    blake
   end
 
   def negative_review_one
@@ -90,28 +94,55 @@ Last year, the only concerns with Xavier performance were around ownership.  In 
     david_employee = david
     blake_employee = blake
     dept = Department.new(name: "Hard Knocks", employees: [david_employee, blake_employee])
-    dept.change_salary(percent: 100, all: true)
+    dept.change_salary(percent: 100)
     assert_equal 80000, david_employee.salary
     assert_equal 80002, blake_employee.salary
     assert_equal 160_002, dept.total_salary
-    dept.change_salary(adjust_amount: 2, all: true)
+    dept.change_salary(adjust_amount: 2)
     assert_equal 80001, david_employee.salary
     assert_equal 80003, blake_employee.salary
     assert_equal 160004, dept.total_salary
   end
 
-    def test_unraise_department_salary
+  def test_unraise_department_salary
     david_employee = david
     blake_employee = blake
     dept = Department.new(name: "Hard Knocks", employees: [david_employee, blake_employee])
-    dept.change_salary(percent: -50, all: true)
+    dept.change_salary(percent: -50)
     assert_equal 20_000, david_employee.salary
     assert_equal 20_000.50, blake_employee.salary
     assert_equal 40_000.50, dept.total_salary
-    dept.change_salary(adjust_amount: -2, all: true)
+    dept.change_salary(adjust_amount: -2)
     assert_equal 19_999, david_employee.salary
     assert_equal 19_999.50, blake_employee.salary
     assert_equal 39_998.50, dept.total_salary
+  end
+
+  def test_raise_department_salary_for_good_performers
+    david_employee = david
+    david_employee2 = david
+    blake_employee = blake
+    david_employee.add_review(Review.new(review: "Some review", rating: 0.51))
+    david_employee2.add_review(Review.new(review: "Some review", rating: 0.51))
+    blake_employee.add_review(Review.new(review: "Some review", rating: 0.49))
+    dept = Department.new(name: "Hard Knocks", employees: [david_employee, blake_employee])
+    dept.change_salary(adjust_amount: 10000) { |e| e.performance > 0.50 }
+    assert_equal 50_000, david_employee.salary
+    assert_equal 40_001, blake_employee.salary
+    dept.add_employee(david_employee2)
+    dept.change_salary(adjust_amount: 10000) { |e| e.performance > 0.50 }
+    assert_equal 55_000, david_employee.salary
+    assert_equal 45_000, david_employee2.salary
+    assert_equal 40_001, blake_employee.salary
+  end
+
+  def test_unraise_department_salary_for_bad_performers
+    david_employee = david
+    blake_employee = blake
+    dept = Department.new(name: "Hard Knocks", employees: [david_employee, blake_employee])
+    dept.change_salary(adjust_amount: -10000) { |e| e.name == "David" }
+    assert_equal 30_000, david_employee.salary
+    assert_equal 40_001, blake_employee.salary
   end
 
 
