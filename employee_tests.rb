@@ -43,11 +43,11 @@ Last year, the only concerns with Xavier performance were around ownership.  In 
     assert_raises(ArgumentError) { Employee.new(name: "David") }
     assert_raises(ArgumentError) { Employee.new(salary: 10000) }
     assert david_employee
-    assert_equal david_employee.class, Employee
-    assert_equal david_employee.name, "David"
-    assert_equal david_employee.salary, 40000
-    assert_equal david_employee.email, "david@test.com"
-    assert_equal david_employee.phone, "123"
+    assert_equal Employee, david_employee.class
+    assert_equal "David", david_employee.name
+    assert_equal 40000, david_employee.salary
+    assert_equal "david@test.com", david_employee.email
+    assert_equal "123", david_employee.phone
   end
 
   def test_new_department
@@ -58,60 +58,60 @@ Last year, the only concerns with Xavier performance were around ownership.  In 
   def test_add_employee_to_department
     dept = Department.new(name: "Hard Knocks", employees: [david])
     assert dept
-    refute_equal dept.employees.length, 2
+    refute_equal 2, dept.employees.length
     dept.add_employee(blake)
-    assert_equal dept.employees.length, 2
+    assert_equal 2, dept.employees.length
   end
 
   def test_department_total_salary
     dept = Department.new(name: "Hard Knocks", employees: [david, blake])
-    assert_equal david.salary, 40000
-    assert_equal blake.salary, 40001
-    assert_equal dept.total_salary, 80001
+    assert_equal 40000, david.salary
+    assert_equal 40001, blake.salary
+    assert_equal 80001, dept.total_salary
   end
 
   def test_raise_employee_salary
     david_employee = david
     assert david_employee.change_salary(percent: 10)
-    assert_equal david_employee.salary, 44000
+    assert_equal 44000, david_employee.salary
     assert david_employee.change_salary(adjust_amount: 1)
-    assert_equal david_employee.salary, 44001
+    assert_equal 44001, david_employee.salary
   end
 
   def test_unraise_employee_salary
     david_employee = david
     assert david_employee.change_salary(percent: -10)
-    assert_equal david_employee.salary, 36000
+    assert_equal 36000, david_employee.salary
     assert david_employee.change_salary(adjust_amount: -1)
-    assert_equal david_employee.salary, 35999
+    assert_equal 35999, david_employee.salary
   end
 
   def test_raise_department_salary
     david_employee = david
     blake_employee = blake
     dept = Department.new(name: "Hard Knocks", employees: [david_employee, blake_employee])
-    dept.change_salary(percent: 100)
-    assert_equal david_employee.salary, 80_000
-    assert_equal blake_employee.salary, 80_002
-    assert_equal dept.total_salary, 160_002
-    dept.change_salary(adjust_amount: 2)
-    assert_equal david_employee.salary, 80_001
-    assert_equal blake_employee.salary, 80_003
-    assert_equal dept.total_salary, 160_004
+    dept.change_salary(percent: 100, all: true)
+    assert_equal 80000, david_employee.salary
+    assert_equal 80002, blake_employee.salary
+    assert_equal 160_002, dept.total_salary
+    dept.change_salary(adjust_amount: 2, all: true)
+    assert_equal 80001, david_employee.salary
+    assert_equal 80003, blake_employee.salary
+    assert_equal 160004, dept.total_salary
   end
 
     def test_unraise_department_salary
     david_employee = david
     blake_employee = blake
     dept = Department.new(name: "Hard Knocks", employees: [david_employee, blake_employee])
-    dept.change_salary(percent: -50)
-    assert_equal david_employee.salary, 20_000
-    assert_equal blake_employee.salary, 20_001.50
-    assert_equal dept.total_salary, 40_001.50
-    dept.change_salary(adjust_amount: -2)
-    assert_equal david_employee.salary, 19_999
-    assert_equal blake_employee.salary, 20_000.50
-    assert_equal dept.total_salary, 39_999.50
+    dept.change_salary(percent: -50, all: true)
+    assert_equal 20_000, david_employee.salary
+    assert_equal 20_000.50, blake_employee.salary
+    assert_equal 40_000.50, dept.total_salary
+    dept.change_salary(adjust_amount: -2, all: true)
+    assert_equal 19_999, david_employee.salary
+    assert_equal 19_999.50, blake_employee.salary
+    assert_equal 39_998.50, dept.total_salary
   end
 
 
