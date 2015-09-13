@@ -33,4 +33,10 @@ class EmployeeTest < Minitest::Test
     assert_equal dept.employees.length, 2
   end
 
+  def test_department_total_salary
+    dept = Department.new(name: "Hard Knocks", employees: [david, blake])
+    assert_equal david.salary, 40000
+    assert_equal blake.salary, 40001
+    assert_equal dept.total_salary, 80001
+  end
 end
