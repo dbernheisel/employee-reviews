@@ -1,22 +1,31 @@
 class Employee
 
-  attr_reader :salary
   attr_reader :name
+  attr_reader :salary
   attr_reader :reviews
+  attr_reader :performance
+  attr_reader :email
+  attr_reader :phone
 
-  def initialize(name: name, salary: salary, reviews: reviews = [], performance: performance)
+  def initialize( name:,
+                  salary:,
+                  reviews: [],
+                  email: "",
+                  phone: "")
     @salary = salary
     @name = name
     @reviews = reviews
-    @performance = performance
+    @email = email
+    @phone = phone
   end
 
-  def raise_salary(percent: percent = 0, amount: amount = 0)
+  def change_salary(percent: percent = 0, amount: amount = 0)
+    raise ArgumentError "Need a percent or amount" if percent == 0 && amount == 0
 
   end
 
   def add_review(review)
-
+    @reviews << review
   end
 
 
