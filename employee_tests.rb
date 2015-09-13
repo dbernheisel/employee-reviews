@@ -145,5 +145,21 @@ Last year, the only concerns with Xavier performance were around ownership.  In 
     assert_equal 40_001, blake_employee.salary
   end
 
+  def test_emploee_add_review
+    david_employee = david
+    review = Review.new(review: "Superb human being")
+    david_employee.add_review(review)
+    assert david_employee.reviews.length == 1
+    assert david_employee.reviews[0].review == "Superb human being"
+  end
+
+  def test_change_review
+    review = Review.new(review: "Superb human being")
+    assert review.sentiment_rating.nil?
+    review.rate_review
+  end
+
+
+
 
 end
