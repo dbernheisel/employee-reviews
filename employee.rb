@@ -19,9 +19,18 @@ class Employee
     @phone = phone
   end
 
-  def change_salary(percent: percent = 0, amount: amount = 0)
-    raise ArgumentError "Need a percent or amount" if percent == 0 && amount == 0
+  def change_salary(percent: 0, amount: 0)
+    raise ArgumentError "Need a percent OR amount" if percent == 0 && amount == 0
+    raise ArgumentError "Provided both arguments, but can only take one" if percent != 0 && amount != 0
 
+    if percent != 0
+      @salary = @salary * percent+1 if percent > 0
+      @salary = @salary * percent-1 if percent < 0
+    elseif amount != 0
+      @salary += amount
+    end
+
+    @salary
   end
 
   def add_review(review)
