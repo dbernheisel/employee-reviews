@@ -6,6 +6,7 @@ class Department
   def initialize(name:, employees: [])
     @name = name
     @employees = employees
+
   end
 
 
@@ -19,9 +20,10 @@ class Department
   end
 
 
-  def change_salary(percent: 0.0, adjust_amount: 0.0)
+  def change_salary(percent: 0.0, adjust_amount: 0.0, weight_by_score: false)
     raise ArgumentError "Need a percent or amount" if percent == 0.0 && adjust_amount == 0.0
     raise ArgumentError "Provided both arguments, but can only take one" if percent != 0.0 && adjust_amount != 0.0
+    return nil if @employees.length < 1
 
     employees = []
     if block_given?
@@ -30,9 +32,16 @@ class Department
       employees = @employees
     end
 
+
     unless adjust_amount == 0.0
-      amount_each = adjust_amount / employees.length
-      employees.each { |e| e.change_salary(adjust_amount: amount_each) }
+      if weight_by_score
+        performances = employees.collect { |e| e.performance }
+        total_performance = performances.reduce { |sum, p| sum + p }.to_f
+        employees.each { |e| e.change_salary(adjust_amount: e.performance/total_performance) }
+      else
+        amount_each = adjust_amount / employees.length
+        employees.each { |e| e.change_salary(adjust_amount: amount_each) }
+      end
     end
 
     employees.each { |e| e.change_salary(percent: percent) } unless percent == 0.0
